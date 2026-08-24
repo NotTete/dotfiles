@@ -2,14 +2,15 @@
   flake.nixosModules.radahnConfiguration = { pkgs, lib, ...}: {
     imports = [
       self.nixosModules.radahnHardware
+      self.nixosModules.displayManager
     ];
 
-    nix.settings.experimental-features = [ "nix-command" "flakes" ];
+    boot = {
+      loader.systemd-boot.enable = true;
+      loader.efi.canTouchEfiVariables = true;
+    };
 
-    environment.systemPackages = with pkgs; [
-      firefox
-      vim
-    ];
+    system.stateVersion = "26.05";
   };
 }
 
