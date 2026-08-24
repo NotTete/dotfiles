@@ -3,7 +3,7 @@
 
   inputs = {
     flake-parts.url = "github:hercules-ci/flake-parts";
-    inputs.import-tree.url = "github:denful/import-tree";
+    import-tree.url = "github:denful/import-tree";
 
     nixpkgs.url = "github:nixos/nixpkgs?ref=nixos-unstable";
     home-manager = {
