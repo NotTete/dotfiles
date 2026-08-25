@@ -3,6 +3,7 @@
     imports = [
       self.nixosModules.radahnHardware
       self.nixosModules.displayManager
+      self.nixosModules.git
     ];
 
     boot = {
