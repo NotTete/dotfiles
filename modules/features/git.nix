@@ -1,11 +1,11 @@
 { self, inputs, ... }: {
-  flake.nixosModules.git = {...}: {
+  flake.nixosModules.git = { config, ... }: {
     programs.git = {
       enable = true;
       config = {
         init.defaultBranch = "main";
-        user.name = "NotTete";
-        user.email = "55021970+NotTete@users.noreply.github.com";
+        user.name = config.preferences.user.nick;
+        user.email = config.preferences.user.email;
       };
     };
   };

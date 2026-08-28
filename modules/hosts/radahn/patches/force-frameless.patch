@@ -1,0 +1,19 @@
+diff --git a/src-tauri/src/lib.rs b/src-tauri/src/lib.rs
+index 0680ac0..930f5f8 100644
+--- a/src-tauri/src/lib.rs
++++ b/src-tauri/src/lib.rs
+@@ -155,6 +155,14 @@ pub fn run() {
+                 }
+             }
+ 
++            // Force frameless on all windows (config decorations not always honoured on Linux/GTK).
++            #[cfg(desktop)]
++            {
++                for (_, win) in app.webview_windows() {
++                    let _ = win.set_decorations(false);
++                }
++            }
++
+             Ok(())
+         })
+         .manage(app_state)
