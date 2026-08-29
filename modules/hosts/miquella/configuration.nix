@@ -12,6 +12,7 @@
       self.nixosModules.ssh
       self.nixosModules.shell
       self.nixosModules.immich
+      self.nixosModules.searxng
     ];
 
     # sops-nix needs the age private key to decrypt secrets at boot.
@@ -20,6 +21,8 @@
     ssh.enableServer = true;
 
     immich.enableServer = true;
+
+    searxng.enable = true;
 
     preferences = {
       hostName = "miquella";
