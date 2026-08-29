@@ -53,6 +53,8 @@
       experimental-features = [ "nix-command" "flakes" ];
     };
 
+    ssh.enableServer = true;
+
     networking = {
       hostName = config.preferences.hostName;
       networkmanager.enable = true;
