@@ -11,12 +11,15 @@
       self.nixosModules.tailscale
       self.nixosModules.ssh
       self.nixosModules.shell
+      self.nixosModules.immich
     ];
 
     # sops-nix needs the age private key to decrypt secrets at boot.
     sops.age.keyFile = "${config.users.users.tete.home}/.config/sops/age/keys.txt";
 
     ssh.enableServer = true;
+
+    immich.enableServer = true;
 
     preferences = {
       hostName = "miquella";
