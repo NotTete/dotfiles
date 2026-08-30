@@ -26,7 +26,9 @@
 
     config = lib.mkIf config.lidarr.enable {
       # Nightly (develop) Lidarr, run in a container because self-contained
-      # .NET is painful to patchelf on NixOS. linuxserver image.
+      # .NET is painful to patchelf on NixOS. linuxserver image. Each app keeps
+      # its own identity; the shared music folder is a dedicated `music` group,
+      # so Lidarr runs as uid 992 with that group as its primary GID.
       virtualisation.oci-containers = {
         backend = "podman";
         containers."lidarr-nightly" = {
@@ -38,18 +40,17 @@
             "${config.lidarr.musicFolder}:/music"
           ];
           environment = {
-            PUID = "991"; # navidrome uid: owns the shared music folder
-            PGID = "988"; # navidrome gid
+            PUID = "992"; # dedicated lidarr uid
+            PGID = "989"; # music group gid
             TZ = "Atlantic/Canary";
           };
           extraOptions = [ "--pull=always" ];
         };
       };
 
-      # Create Lidarr's config dir owned by the container user (navidrome uid)
-      # so it can write to the shared music folder.
+      # Create Lidarr's config dir owned by its container user + the music group.
       systemd.tmpfiles.rules = [
-        "d /var/lib/lidarr 0755 991 988 - -"
+        "d /var/lib/lidarr 0755 992 music - -"
       ];
 
       # Only allow traffic from the tailnet, mirroring the other service modules.

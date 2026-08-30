@@ -36,10 +36,13 @@
       };
 
       # The music folder is shared between navidrome (scans it), slskd (shares
-      # it) and the user (adds songs). Navidrome creates it as navidrome:navidrome
-      # 700, which locks everyone else out, so fix the perms after it starts:
-      # group-writable + setgid so new files inherit the navidrome group.
-      users.users.tete.extraGroups = [ "navidrome" ];
+      # it), Lidarr (manages it) and the user (adds songs). Navidrome creates
+      # it as itself (700) which locks everyone else out, so give a dedicated
+      # `music` group ownership and make the folder group-writable + setgid so
+      # each service keeps its own identity and new files inherit the group.
+      users.groups.music.gid = 989;
+      users.users.tete.extraGroups = [ "music" ];
+      users.users.slskd.extraGroups = [ "music" ];
 
       systemd.services.fix-music-perms = {
         description = "Fix permissions on the shared music folder";
@@ -51,8 +54,8 @@
         };
         script = ''
           mkdir -p ${config.navidrome.musicFolder}
+          chown root:music ${config.navidrome.musicFolder}
           chmod 2775 ${config.navidrome.musicFolder}
-          chown navidrome:navidrome ${config.navidrome.musicFolder}
         '';
       };
 
