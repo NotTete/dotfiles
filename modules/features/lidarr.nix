@@ -38,6 +38,7 @@
           volumes = [
             "/var/lib/lidarr:/config"
             "${config.lidarr.musicFolder}:/music"
+            "/var/lib/slskd/downloads:/var/lib/slskd/downloads"
           ];
           environment = {
             PUID = "992"; # dedicated lidarr uid
