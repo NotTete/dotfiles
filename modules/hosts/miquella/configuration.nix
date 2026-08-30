@@ -15,6 +15,7 @@
       self.nixosModules.searxng
       self.nixosModules.navidrome
       self.nixosModules.slskd
+      self.nixosModules.lidarr
     ];
 
     # sops-nix needs the age private key to decrypt secrets at boot.
@@ -29,6 +30,8 @@
     navidrome.enable = true;
 
     slskd.enable = true;
+
+    lidarr.enable = true;
 
     preferences = {
       hostName = "miquella";
