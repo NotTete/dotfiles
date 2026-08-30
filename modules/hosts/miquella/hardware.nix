@@ -20,7 +20,7 @@
         options = [ "fmask=0077" "dmask=0077" ];
       };
 
-    swapDevices = [ ];
+    swapDevices = [ { device = "/swapfile"; size = 16384; } ];
 
     nixpkgs.hostPlatform = lib.mkDefault "x86_64-linux";
     hardware.cpu.intel.updateMicrocode = lib.mkDefault config.hardware.enableRedistributableFirmware;

@@ -96,6 +96,10 @@
           enable = true;
           host = "0.0.0.0";
           openFirewall = false;
+          machine-learning.environment = {
+            MACHINE_LEARNING_MODEL_TTL = "60";
+            MACHINE_LEARNING_CONCURRENCY = "1";
+          };
         };
 
         networking.firewall.extraInputRules = ''

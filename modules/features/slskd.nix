@@ -76,6 +76,15 @@
         };
       };
 
+      # The nixpkgs module sets ReadWritePaths to the download/incomplete dirs,
+      # but only auto-creates /var/lib/slskd (StateDirectory). Create the
+      # subdirs up front so systemd's mount-namespace setup doesn't fail with
+      # 226/NAMESPACE.
+      systemd.tmpfiles.rules = [
+        "d ${config.slskd.downloadFolder} 0755 slskd slskd - -"
+        "d ${config.slskd.incompleteFolder} 0755 slskd slskd - -"
+      ];
+
       # Only allow traffic from the tailnet, mirroring the immich/searxng/navidrome modules.
       networking.firewall.extraInputRules = ''
         ip saddr 100.64.0.0/10 tcp dport ${toString config.slskd.port} accept
