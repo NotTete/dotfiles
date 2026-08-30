@@ -109,8 +109,10 @@
           "d ${config.slskd.incompleteFolder} 0755 slskd slskd - -"
         ];
 
-        # Only allow traffic from the tailnet, mirroring the immich/searxng/navidrome modules.
+        # Only allow traffic from the loopback or the tailnet, mirroring the immich/searxng/navidrome modules.
         networking.firewall.extraInputRules = ''
+          ip saddr 127.0.0.0/8  tcp dport ${toString config.slskd.port} accept
+          ip6 saddr ::1        tcp dport ${toString config.slskd.port} accept
           ip saddr 100.64.0.0/10 tcp dport ${toString config.slskd.port} accept
         '';
       })
