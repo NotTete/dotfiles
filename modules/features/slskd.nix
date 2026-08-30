@@ -109,15 +109,16 @@
           "d ${config.slskd.incompleteFolder} 0755 slskd slskd - -"
         ];
 
-        # Allow traffic from the tailnet, loopback, and the local podman bridge
-        # (so the Lidarr container can reach the slskd API). Mirroring the
-        # immich/searxng/navidrome modules.
-        networking.firewall.extraInputRules = ''
-          ip saddr 10.88.0.0/16  tcp dport ${toString config.slskd.port} accept
-          ip saddr 127.0.0.0/8   tcp dport ${toString config.slskd.port} accept
-          ip6 saddr ::1         tcp dport ${toString config.slskd.port} accept
-          ip saddr 100.64.0.0/10 tcp dport ${toString config.slskd.port} accept
-        '';
+        # Open slskd's web port on the podman bridge (so the Lidarr container
+        # can reach the API) and on the tailnet (so other nodes can reach the
+        # UI). Loopback is accepted by the firewall automatically.
+        # Deliberately uses networking.firewall.interfaces rather than
+        # extraInputRules, because extraInputRules only renders under the
+        # nftables backend and miquella uses iptables, so those were dropped.
+        networking.firewall.interfaces = {
+          "podman0".allowedTCPPorts = [ config.slskd.port ];
+          "tailscale0".allowedTCPPorts = [ config.slskd.port ];
+        };
       })
 
       (lib.mkIf config.slskd.enableDesktop (let
