@@ -44,7 +44,7 @@
       users.users.tete.extraGroups = [ "music" ];
       users.users.slskd.extraGroups = [ "music" ];
       users.users.navidrome.extraGroups = [ "music" ];
-      systemd.services.navidrome.serviceConfig.UMask = "0002";
+      systemd.services.navidrome.serviceConfig.UMask = lib.mkForce "0002";
 
       systemd.services.fix-music-perms = {
         description = "Fix permissions on the shared music folder";
