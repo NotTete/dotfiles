@@ -104,10 +104,18 @@
         # but only auto-creates /var/lib/slskd (StateDirectory). Create the
         # subdirs up front so systemd's mount-namespace setup doesn't fail with
         # 226/NAMESPACE.
+        #
+        # The downloads dir is slskd:music with setgid (2775) so slskd keeps
+        # ownership while the Lidarr container (uid 992, gid 989 = music) can
+        # read the finished files and remove them when importing.
         systemd.tmpfiles.rules = [
-          "d ${config.slskd.downloadFolder} 0755 slskd slskd - -"
+          "d ${config.slskd.downloadFolder} 2775 slskd music - -"
           "d ${config.slskd.incompleteFolder} 0755 slskd slskd - -"
         ];
+
+        # Write downloaded files group-readable (group rw) so the Lidarr
+        # container can import them. slskd is a member of the `music` group.
+        systemd.services.slskd.serviceConfig.UMask = "0002";
 
         # Open slskd's web port on the podman bridge (so the Lidarr container
         # can reach the API) and on the tailnet (so other nodes can reach the
