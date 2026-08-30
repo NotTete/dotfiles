@@ -42,7 +42,7 @@
           ];
           environment = {
             PUID = "992"; # dedicated lidarr uid
-            PGID = "989"; # music group gid
+            PGID = "986"; # music group gid
             TZ = "Atlantic/Canary";
           };
           extraOptions = [ "--pull=always" ];

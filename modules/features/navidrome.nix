@@ -40,9 +40,11 @@
       # it as itself (700) which locks everyone else out, so give a dedicated
       # `music` group ownership and make the folder group-writable + setgid so
       # each service keeps its own identity and new files inherit the group.
-      users.groups.music.gid = 989;
+      users.groups.music.gid = 986;
       users.users.tete.extraGroups = [ "music" ];
       users.users.slskd.extraGroups = [ "music" ];
+      users.users.navidrome.extraGroups = [ "music" ];
+      systemd.services.navidrome.serviceConfig.UMask = "0002";
 
       systemd.services.fix-music-perms = {
         description = "Fix permissions on the shared music folder";
@@ -56,6 +58,8 @@
           mkdir -p ${config.navidrome.musicFolder}
           chown root:music ${config.navidrome.musicFolder}
           chmod 2775 ${config.navidrome.musicFolder}
+          chgrp -R music ${config.navidrome.musicFolder}
+          chmod -R u+rwX,g+rwX ${config.navidrome.musicFolder}
         '';
       };
 
