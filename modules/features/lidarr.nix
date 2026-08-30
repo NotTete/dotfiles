@@ -1,11 +1,11 @@
-{ self, inputs, ... }: {
+{ self, inputs, lib, ... }: {
   flake.nixosModules.lidarr = { config, lib, pkgs, ... }: {
     options.lidarr = {
       enable = lib.mkOption {
         type = lib.types.bool;
         default = false;
         description = ''
-          Whether to enable the Lidarr music download manager.
+          Whether to enable Lidarr (nightly) as a container.
 
           The server binds on all interfaces but the firewall only accepts
           traffic coming from the tailscale network (100.64.0.0/10), so it is
@@ -25,22 +25,34 @@
     };
 
     config = lib.mkIf config.lidarr.enable {
-      services.lidarr = {
-        enable = true;
-        openFirewall = false;
-        settings = {
-          server = {
-            port = config.lidarr.port;
-            bindaddress = "*";
+      # Nightly (develop) Lidarr, run in a container because self-contained
+      # .NET is painful to patchelf on NixOS. linuxserver image.
+      virtualisation.oci-containers = {
+        backend = "podman";
+        containers."lidarr-nightly" = {
+          image = "docker.io/linuxserver/lidarr:nightly";
+          autoStart = true;
+          ports = [ "${toString config.lidarr.port}:8686" ];
+          volumes = [
+            "/var/lib/lidarr:/config"
+            "${config.lidarr.musicFolder}:/music"
+          ];
+          environment = {
+            PUID = "991"; # navidrome uid: owns the shared music folder
+            PGID = "988"; # navidrome gid
+            TZ = "Atlantic/Canary";
           };
+          extraOptions = [ "--pull=always" ];
         };
       };
 
-      # Let the lidarr user write into the shared music folder so it can manage
-      # the library (the navidrome module makes it group-writable).
-      users.users.lidarr.extraGroups = [ "navidrome" ];
+      # Create Lidarr's config dir owned by the container user (navidrome uid)
+      # so it can write to the shared music folder.
+      systemd.tmpfiles.rules = [
+        "d /var/lib/lidarr 0755 991 988 - -"
+      ];
 
-      # Only allow traffic from the tailnet, mirroring the immich/searxng/navidrome modules.
+      # Only allow traffic from the tailnet, mirroring the other service modules.
       networking.firewall.extraInputRules = ''
         ip saddr 100.64.0.0/10 tcp dport ${toString config.lidarr.port} accept
       '';
