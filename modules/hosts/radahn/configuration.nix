@@ -28,6 +28,7 @@
       self.nixosModules.git
       self.nixosModules.terminal
       self.nixosModules.immich
+      self.nixosModules.slskd
       self.nixosModules.hyprland
       self.nixosModules.browser
       self.nixosModules.virtualization
@@ -39,6 +40,8 @@
     sops.age.keyFile = "${config.users.users.tete.home}/.config/sops/age/keys.txt";
 
     immich.enableDesktop = true;
+
+    slskd.enableDesktop = true;
 
     preferences = {
       hostName = "radahn";
