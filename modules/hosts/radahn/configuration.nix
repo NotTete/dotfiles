@@ -34,6 +34,7 @@
       self.nixosModules.virtualization
       self.nixosModules.tailscale
       self.nixosModules.ssh
+      self.nixosModules.dashboard
     ];
 
     # sops-nix needs the age private key to decrypt secrets at boot.
@@ -42,6 +43,8 @@
     immich.enableDesktop = true;
 
     slskd.enableDesktop = true;
+
+    dashboard.enable = true;
 
     preferences = {
       hostName = "radahn";

@@ -26,7 +26,7 @@
 
     immich.enableServer = true;
 
-    searxng.enable = true;
+    searxng.enable = false;
 
     navidrome.enable = true;
 

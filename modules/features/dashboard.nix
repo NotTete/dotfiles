@@ -91,8 +91,9 @@
         };
       };
 
-      # Only allow traffic from the tailnet, mirroring the immich/searxng/navidrome modules.
+      # Allow localhost (for testing) and the tailnet, mirroring the other service modules.
       networking.firewall.extraInputRules = ''
+        ip saddr 127.0.0.0/8 tcp dport ${toString config.dashboard.port} accept
         ip saddr 100.64.0.0/10 tcp dport ${toString config.dashboard.port} accept
       '';
     };
